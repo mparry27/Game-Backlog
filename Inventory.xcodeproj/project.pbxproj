@@ -17,6 +17,8 @@
 		179F92AC24A55E93006FCF14 /* InventoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92AB24A55E93006FCF14 /* InventoryUITests.swift */; };
 		179F92BA24A55EF5006FCF14 /* Jenkinsfile in Resources */ = {isa = PBXBuildFile; fileRef = 179F92B924A55EF5006FCF14 /* Jenkinsfile */; };
 		179F92BC24A55F09006FCF14 /* InventoryUITestsCS3260.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92BB24A55F09006FCF14 /* InventoryUITestsCS3260.swift */; };
+		179F92BE24A56070006FCF14 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92BD24A56070006FCF14 /* EditViewController.swift */; };
+		179F92C024A56089006FCF14 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92BF24A56089006FCF14 /* AddViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,8 @@
 		179F92AD24A55E93006FCF14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		179F92B924A55EF5006FCF14 /* Jenkinsfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Jenkinsfile; sourceTree = "<group>"; };
 		179F92BB24A55F09006FCF14 /* InventoryUITestsCS3260.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InventoryUITestsCS3260.swift; sourceTree = "<group>"; };
+		179F92BD24A56070006FCF14 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
+		179F92BF24A56089006FCF14 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +112,8 @@
 				179F928B24A55E8C006FCF14 /* SceneDelegate.swift */,
 				179F928D24A55E8C006FCF14 /* ViewController.swift */,
 				179F928F24A55E8C006FCF14 /* Main.storyboard */,
+				179F92BD24A56070006FCF14 /* EditViewController.swift */,
+				179F92BF24A56089006FCF14 /* AddViewController.swift */,
 				179F929224A55E93006FCF14 /* Assets.xcassets */,
 				179F929424A55E93006FCF14 /* LaunchScreen.storyboard */,
 				179F929724A55E93006FCF14 /* Info.plist */,
@@ -266,6 +272,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				179F92C024A56089006FCF14 /* AddViewController.swift in Sources */,
+				179F92BE24A56070006FCF14 /* EditViewController.swift in Sources */,
 				179F928E24A55E8C006FCF14 /* ViewController.swift in Sources */,
 				179F928A24A55E8C006FCF14 /* AppDelegate.swift in Sources */,
 				179F928C24A55E8C006FCF14 /* SceneDelegate.swift in Sources */,

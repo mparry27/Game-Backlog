@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1768B83B24A678F500B67459 /* GradeMe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1768B83A24A678F500B67459 /* GradeMe.swift */; };
+		1772EC6124BA50BB0023A3D4 /* Jenkinsfile in Resources */ = {isa = PBXBuildFile; fileRef = 1772EC6024BA50BB0023A3D4 /* Jenkinsfile */; };
+		1772EC6324BA50C60023A3D4 /* Inventory2UITestsCS3260.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1772EC6224BA50C60023A3D4 /* Inventory2UITestsCS3260.swift */; };
 		179F928A24A55E8C006FCF14 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F928924A55E8C006FCF14 /* AppDelegate.swift */; };
 		179F928C24A55E8C006FCF14 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F928B24A55E8C006FCF14 /* SceneDelegate.swift */; };
 		179F928E24A55E8C006FCF14 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F928D24A55E8C006FCF14 /* ViewController.swift */; };
@@ -16,8 +18,6 @@
 		179F929624A55E93006FCF14 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 179F929424A55E93006FCF14 /* LaunchScreen.storyboard */; };
 		179F92A124A55E93006FCF14 /* InventoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92A024A55E93006FCF14 /* InventoryTests.swift */; };
 		179F92AC24A55E93006FCF14 /* InventoryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92AB24A55E93006FCF14 /* InventoryUITests.swift */; };
-		179F92BA24A55EF5006FCF14 /* Jenkinsfile in Resources */ = {isa = PBXBuildFile; fileRef = 179F92B924A55EF5006FCF14 /* Jenkinsfile */; };
-		179F92BC24A55F09006FCF14 /* InventoryUITestsCS3260.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92BB24A55F09006FCF14 /* InventoryUITestsCS3260.swift */; };
 		179F92BE24A56070006FCF14 /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92BD24A56070006FCF14 /* EditViewController.swift */; };
 		179F92C024A56089006FCF14 /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F92BF24A56089006FCF14 /* AddViewController.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +41,8 @@
 
 /* Begin PBXFileReference section */
 		1768B83A24A678F500B67459 /* GradeMe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradeMe.swift; sourceTree = "<group>"; };
+		1772EC6024BA50BB0023A3D4 /* Jenkinsfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Jenkinsfile; sourceTree = "<group>"; };
+		1772EC6224BA50C60023A3D4 /* Inventory2UITestsCS3260.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Inventory2UITestsCS3260.swift; sourceTree = "<group>"; };
 		179F928624A55E8C006FCF14 /* Inventory.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Inventory.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		179F928924A55E8C006FCF14 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		179F928B24A55E8C006FCF14 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -55,8 +57,6 @@
 		179F92A724A55E93006FCF14 /* InventoryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InventoryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		179F92AB24A55E93006FCF14 /* InventoryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryUITests.swift; sourceTree = "<group>"; };
 		179F92AD24A55E93006FCF14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		179F92B924A55EF5006FCF14 /* Jenkinsfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Jenkinsfile; sourceTree = "<group>"; };
-		179F92BB24A55F09006FCF14 /* InventoryUITestsCS3260.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InventoryUITestsCS3260.swift; sourceTree = "<group>"; };
 		179F92BD24A56070006FCF14 /* EditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
 		179F92BF24A56089006FCF14 /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,7 +89,7 @@
 		179F927D24A55E8C006FCF14 = {
 			isa = PBXGroup;
 			children = (
-				179F92B924A55EF5006FCF14 /* Jenkinsfile */,
+				1772EC6024BA50BB0023A3D4 /* Jenkinsfile */,
 				179F928824A55E8C006FCF14 /* Inventory */,
 				179F929F24A55E93006FCF14 /* InventoryTests */,
 				179F92AA24A55E93006FCF14 /* InventoryUITests */,
@@ -136,7 +136,7 @@
 		179F92AA24A55E93006FCF14 /* InventoryUITests */ = {
 			isa = PBXGroup;
 			children = (
-				179F92BB24A55F09006FCF14 /* InventoryUITestsCS3260.swift */,
+				1772EC6224BA50C60023A3D4 /* Inventory2UITestsCS3260.swift */,
 				179F92AB24A55E93006FCF14 /* InventoryUITests.swift */,
 				179F92AD24A55E93006FCF14 /* Info.plist */,
 			);
@@ -248,7 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				179F929624A55E93006FCF14 /* LaunchScreen.storyboard in Resources */,
-				179F92BA24A55EF5006FCF14 /* Jenkinsfile in Resources */,
+				1772EC6124BA50BB0023A3D4 /* Jenkinsfile in Resources */,
 				179F929324A55E93006FCF14 /* Assets.xcassets in Resources */,
 				179F929124A55E8C006FCF14 /* Main.storyboard in Resources */,
 			);
@@ -296,8 +296,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1772EC6324BA50C60023A3D4 /* Inventory2UITestsCS3260.swift in Sources */,
 				179F92AC24A55E93006FCF14 /* InventoryUITests.swift in Sources */,
-				179F92BC24A55F09006FCF14 /* InventoryUITestsCS3260.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

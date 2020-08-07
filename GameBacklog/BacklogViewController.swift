@@ -11,12 +11,12 @@ import SQLite3
 
 struct Game{
     var title: String = ""
-    var developer: String = ""
-    var releaseDate: Date = Date()
-    var coverURL: String = ""
-    var description: String = ""
-    var genre: String = ""
-    var platform: String = ""
+    var developer: String?
+    var releaseDate: Date?
+    var coverURL: String?
+    var description: String?
+    var genre: String?
+    var platform: String?
     var category: Category = Category.planned
 }
 
@@ -139,7 +139,13 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         cell.textLabel?.text = gameData.title
-        cell.detailTextLabel?.text = gameData.developer + " (" + dateFormatter.string(from: gameData.releaseDate) + ")"
+        if(gameData.developer != nil) {
+            cell.detailTextLabel?.text = gameData.developer!
+            if(gameData.releaseDate != nil) {
+                cell.detailTextLabel?.text = "\(cell.detailTextLabel!.text!) (\(dateFormatter.string(from: gameData.releaseDate!)))"
+            }
+        }
+        
         cell.accessoryType = .disclosureIndicator
         
         return cell
@@ -200,7 +206,7 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
             default:
                 gamesPlanned.append(game)
             }
-        saveImage(coverURL: game.coverURL, image: cover!)
+        saveImage(coverURL: game.coverURL!, image: cover!)
         tableView.reloadData()
         
     }
@@ -244,7 +250,7 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
                 gamesPlanned.append(game)
             }
         
-        saveImage(coverURL: game.coverURL, image: cover!)
+        saveImage(coverURL: game.coverURL!, image: cover!)
         tableView.reloadData()
     }
     
@@ -326,37 +332,37 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
            return
         }
 
-        if sqlite3_bind_text(stmt, 2, (game.developer as NSString).utf8String, -1, nil) != SQLITE_OK{
+        if sqlite3_bind_text(stmt, 2, (game.developer! as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
            print("failure binding developer: \(errmsg)")
            return
         }
         
-        if sqlite3_bind_text(stmt, 3, (dateFormatter.string(from: game.releaseDate) as NSString).utf8String, -1, nil) != SQLITE_OK{
+        if sqlite3_bind_text(stmt, 3, (dateFormatter.string(from: game.releaseDate!) as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
            print("failure binding releaseDate: \(errmsg)")
            return
         }
         
-        if sqlite3_bind_text(stmt, 4, (game.coverURL as NSString).utf8String, -1, nil) != SQLITE_OK{
+        if sqlite3_bind_text(stmt, 4, (game.coverURL! as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
            print("failure binding coverURL: \(errmsg)")
            return
         }
         
-        if sqlite3_bind_text(stmt, 5, (game.description as NSString).utf8String, -1, nil) != SQLITE_OK{
+        if sqlite3_bind_text(stmt, 5, (game.description! as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
            print("failure binding description: \(errmsg)")
            return
         }
         
-        if sqlite3_bind_text(stmt, 6, (game.genre as NSString).utf8String, -1, nil) != SQLITE_OK{
+        if sqlite3_bind_text(stmt, 6, (game.genre! as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
            print("failure binding genre: \(errmsg)")
            return
         }
         
-        if sqlite3_bind_text(stmt, 7, (game.platform as NSString).utf8String, -1, nil) != SQLITE_OK{
+        if sqlite3_bind_text(stmt, 7, (game.platform! as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
            print("failure binding platform: \(errmsg)")
            return
@@ -432,7 +438,6 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
         dateFormatter.dateFormat = "yyyy"
         
         //Set up SQL Database
-        
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self,selector: #selector(saveToDatabase(_:)),name: UIApplication.willResignActiveNotification, object: nil)
 
@@ -451,6 +456,8 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         //add observer for adding games from search view
         NotificationCenter.default.addObserver(self, selector: #selector(self.addGameFromSearch(_:)), name: NSNotification.Name(rawValue: "notificationName"), object: nil)
+        
+        tableView.keyboardDismissMode = .onDrag
         
     }
 }

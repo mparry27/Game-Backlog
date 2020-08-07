@@ -49,6 +49,7 @@
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="bUs-2L-c96"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="GS4-et-KXZ"/>
                                 </connections>
                             </tableView>
                         </subviews>
@@ -102,23 +103,17 @@
                                                 <rect key="frame" x="0.0" y="42" width="382" height="34"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="08r-6z-J0A" userLabel="Edit Developer">
-                                                        <rect key="frame" x="0.0" y="0.0" width="274" height="34"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="310" height="34"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits"/>
-                                                        <connections>
-                                                            <action selector="tappedEditDeveloper:" destination="5hr-rK-zGQ" eventType="editingDidBegin" id="TX4-63-ru1"/>
-                                                        </connections>
                                                     </textField>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DsV-tp-79e" userLabel="EditRelease Date">
-                                                        <rect key="frame" x="282" y="0.0" width="100" height="34"/>
+                                                        <rect key="frame" x="318" y="0.0" width="64" height="34"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="100" id="0u9-t0-sv1"/>
+                                                            <constraint firstAttribute="width" constant="64" id="0u9-t0-sv1"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits"/>
-                                                        <connections>
-                                                            <action selector="tappedEditReleaseDate:" destination="5hr-rK-zGQ" eventType="editingDidBegin" id="FP7-rC-oXj"/>
-                                                        </connections>
                                                     </textField>
                                                 </subviews>
                                             </stackView>
@@ -243,6 +238,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                     <textInputTraits key="textInputTraits"/>
+                                    <connections>
+                                        <outlet property="delegate" destination="wA8-Zn-QnA" id="Gf6-jJ-yik"/>
+                                    </connections>
                                 </searchBar>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" textLabel="nZ7-Oi-DAP" style="IBUITableViewCellStyleDefault" id="NN6-Ok-X7O">
@@ -268,6 +266,7 @@
                                 </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="wA8-Zn-QnA" id="YSX-xu-fvZ"/>
+                                    <outlet property="delegate" destination="wA8-Zn-QnA" id="nRn-2d-h4E"/>
                                 </connections>
                             </tableView>
                         </subviews>
@@ -316,23 +315,17 @@
                                                 <rect key="frame" x="0.0" y="42" width="382" height="34"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4IE-6V-mnM" userLabel="Add Developer">
-                                                        <rect key="frame" x="0.0" y="0.0" width="274" height="34"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="310" height="34"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits"/>
-                                                        <connections>
-                                                            <action selector="tappedAddDeveloper:" destination="SdR-jb-iXY" eventType="editingDidBegin" id="T80-VI-fZe"/>
-                                                        </connections>
                                                     </textField>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="phR-9u-mBw" userLabel="Add Release Date">
-                                                        <rect key="frame" x="282" y="0.0" width="100" height="34"/>
+                                                        <rect key="frame" x="318" y="0.0" width="64" height="34"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="100" id="BI3-Am-kfi"/>
+                                                            <constraint firstAttribute="width" constant="64" id="BI3-Am-kfi"/>
                                                         </constraints>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits"/>
-                                                        <connections>
-                                                            <action selector="tappedAddReleaseDate:" destination="SdR-jb-iXY" eventType="editingDidEnd" id="3dk-YP-7BV"/>
-                                                        </connections>
                                                     </textField>
                                                 </subviews>
                                             </stackView>
@@ -464,7 +457,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="gUn-4b-Gh5"/>
+        <segue reference="Pxr-0L-Wlt"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="book" catalog="system" width="128" height="101"/>

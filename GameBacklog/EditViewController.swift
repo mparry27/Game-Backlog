@@ -32,27 +32,15 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         self.editTitle.layer.borderColor = UIColor.black.cgColor
     }
     
-    @IBAction func tappedEditDeveloper(_ sender: UITextField) {
-        self.editDeveloper.layer.borderColor = UIColor.black.cgColor
-    }
-    
-    @IBAction func tappedEditReleaseDate(_ sender: UITextField) {
-        self.editReleaseDate.layer.borderColor = UIColor.black.cgColor
-    }
-    
     @objc func saveGame() {
         if(self.editTitle.text?.isEmpty ?? true) {
             self.editTitle.layer.borderColor = UIColor.red.cgColor
-        }
-        if(self.editDeveloper.text?.isEmpty ?? true) {
-            self.editDeveloper.layer.borderColor = UIColor.red.cgColor
-        }
-        if(self.editReleaseDate.text?.isEmpty ?? true || dateFormatter.date(from: editReleaseDate.text!) == nil) {
+        } else if(dateFormatter.date(from: editReleaseDate.text!) == nil && self.editReleaseDate.text?.isEmpty == false) {
             self.editReleaseDate.layer.borderColor = UIColor.red.cgColor
         } else {
             game.title = editTitle.text!
             game.developer = editDeveloper.text!
-            game.releaseDate = dateFormatter.date(from: editReleaseDate.text!)!
+            game.releaseDate = dateFormatter.date(from: editReleaseDate.text ?? "")
             game.coverURL = editTitle.text! + editDeveloper.text! + editReleaseDate.text!
             game.description = editDescription.text!
             game.genre = editGenre.text!
@@ -182,15 +170,17 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         }
         
         // load image from disk
-        if let cover = loadImageFromDiskWith(coverURL: game.coverURL) {
+        if let cover = loadImageFromDiskWith(coverURL: game.coverURL!) {
             editCover.image = cover
         }
         
         // set info boxes to game being edited
         editTitle.text! = game.title
-        editDeveloper.text! = game.developer
-        editReleaseDate.text! = dateFormatter.string(from: game.releaseDate)
-        editDescription.text! = game.description
+        editDeveloper.text! = game.developer!
+        if(game.releaseDate != nil){
+            editReleaseDate.text = dateFormatter.string(from: game.releaseDate!)
+        }
+        editDescription.text! = game.description!
         editGenre.text = game.genre
         editPlatform.text = game.platform
         editCategory.selectRow(pickerData.firstIndex(of: game.category)!, inComponent: 0, animated: false)

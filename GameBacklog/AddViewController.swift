@@ -31,36 +31,32 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
     @IBAction func tappedAddTitle(_ sender: Any) {
         self.addTitle.layer.borderColor = UIColor.black.cgColor
     }
-    
-    @IBAction func tappedAddDeveloper(_ sender: Any) {
-        self.addDeveloper.layer.borderColor = UIColor.black.cgColor
-    }
-    
-    @IBAction func tappedAddReleaseDate(_ sender: Any) {
-        self.addReleaseDate.layer.borderColor = UIColor.black.cgColor
-    }
-    
+
+    //Bring up textbox for url of image
     @IBAction func tappedEditCover(_ sender: Any) {
         let alert = UIAlertController(title: "Get Game Cover", message: "Enter URL for game cover image", preferredStyle: .alert)
         
         alert.addTextField { (textField) in
+            textField.text = self.game.coverURL ?? ""
         }
 
         alert.addAction(UIAlertAction(title: "Submit", style: .default, handler: { [weak alert] (_) in
             if let imageURL = alert?.textFields![0].text, !imageURL.isEmpty {
-                let url = URL(string: imageURL)!
-                self.addCover.image = self.loadImageFrom(url: url)
+                if let url = URL(string: imageURL) {
+                    self.addCover.image = self.loadImageFrom(url: url)
+                }
             }
         }))
 
         self.present(alert, animated: true, completion: nil)
     }
     
+    // try to grab image from url
     func loadImageFrom(url: URL) -> UIImage {
         if let data = try? Data(contentsOf: url) {
             return UIImage(data: data)!
         }
-        return UIImage(named: "noImage")!
+        return UIImage(named: "noimage")!
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -87,12 +83,10 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
     @objc func saveGame() {
         if(self.addTitle.text?.isEmpty ?? true) {
             self.addTitle.layer.borderColor = UIColor.red.cgColor
-        } else if(self.addDeveloper.text?.isEmpty ?? true) {
-            self.addDeveloper.layer.borderColor = UIColor.red.cgColor
-        } else if(self.addReleaseDate.text?.isEmpty ?? true || dateFormatter.date(from: addReleaseDate.text!) == nil) {
-            self.addReleaseDate.layer.borderColor = UIColor.red.cgColor
+        } else if(dateFormatter.date(from: addReleaseDate.text!) == nil && self.addReleaseDate.text?.isEmpty == false) {
+                self.addReleaseDate.layer.borderColor = UIColor.red.cgColor
         } else {
-            let game:Game = Game(title: addTitle.text!, developer: addDeveloper.text!, releaseDate: dateFormatter.date(from: addReleaseDate.text!)!, coverURL: addTitle.text! + addDeveloper.text! + addReleaseDate.text!, description: addDescription.text, genre: addGenre.text, platform: addPlatform.text, category: pickerData[addCategory.selectedRow(inComponent: 0)])
+            let game:Game = Game(title: addTitle.text!, developer: addDeveloper.text, releaseDate: dateFormatter.date(from: addReleaseDate.text!), coverURL: addTitle.text! + addDeveloper.text! + addReleaseDate.text!, description: addDescription.text, genre: addGenre.text, platform: addPlatform.text, category: pickerData[addCategory.selectedRow(inComponent: 0)])
             delegate?.addGame(game, addCover.image)
             self.navigationController?.popViewController(animated: true)
         }
@@ -158,7 +152,12 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
         // fill input boxes when navigating from search
         addTitle.text = game.title
         addDeveloper.text = game.developer
-        addReleaseDate.text = dateFormatter.string(from: game.releaseDate)
+        if(game.releaseDate != nil){
+            addReleaseDate.text = dateFormatter.string(from: game.releaseDate!)
+        }
+        if(game.coverURL != nil ){
+            self.addCover.image = self.loadImageFrom(url: URL(string: game.coverURL!)!)
+        }
         addDescription.text = game.description
         addGenre.text = game.genre
         addPlatform.text = game.platform

@@ -23,7 +23,7 @@ struct SearchGame{
     var platformIDs: [Int]?
 }
 
-class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddGameProtocol{
+class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate, AddGameProtocol{
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
@@ -46,6 +46,13 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         return cell
     }
     
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let search = searchBar.text!
+        games.removeAll()
+        games.append(contentsOf: self.getGamesWith(query: "fields *; search \"\(search)\"; limit 50;"))
+        tableView.reloadData()
+    }
+    
     func addGame(_ game: Game, _ cover: UIImage?) {
         var imageDataDict = [String: Any]()
         imageDataDict["game"] = game
@@ -55,30 +62,28 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let view = segue.destination as! AddViewController
-        var currentGame = SearchGame()
+        var selectedGame = SearchGame()
         view.delegate = self
         gameIndex = tableView.indexPathForSelectedRow?.row
-        currentGame = games[gameIndex]
+        selectedGame = games[gameIndex]
+        
+        //Get the rest of the game information from other APIs
+        let currentGame = fillInDetailsFor(game: selectedGame)
         view.game.title = currentGame.title
-        view.game.developer = currentGame.developer ?? ""
-        view.game.releaseDate = currentGame.releaseDate ?? Date()
-        view.game.coverURL = currentGame.coverURL ?? ""
-        view.game.description = currentGame.description ?? ""
-        view.game.genre = currentGame.genre ?? ""
-        view.game.platform = currentGame.platform ?? ""
+        view.game.developer = currentGame.developer
+        view.game.releaseDate = currentGame.releaseDate
+        view.game.coverURL = currentGame.coverURL
+        view.game.description = currentGame.description
+        view.game.genre = currentGame.genre
+        view.game.platform = currentGame.platform
         view.game.category = currentGame.category
     }
     
-    func loadDefaultGames() {
-        games.append(contentsOf: self.getDefaultGames())
-        tableView.reloadData()
-    }
-    
-    func getDefaultGames() -> [SearchGame]{
-        var defaultGames = [SearchGame]()
+    func getGamesWith(query: String) -> [SearchGame]{
+        var games = [SearchGame]()
         let url = URL(string: "https://api-v3.igdb.com/games")!
         var requestHeader = URLRequest.init(url: url)
-        requestHeader.httpBody = "fields *; limit 25; sort popularity desc;".data(using: .utf8, allowLossyConversion: false)
+        requestHeader.httpBody = query.data(using: .utf8, allowLossyConversion: false)
         requestHeader.httpMethod = "POST"
         requestHeader.setValue(apikey, forHTTPHeaderField: "user-key")
         requestHeader.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -91,10 +96,8 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
                         game.title = (obj["name"] as! String)
                     }
                     if(obj.keys.contains("first_release_date")) {
-                        let dateFormatterGet = DateFormatter()
-                        dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss +HHmm"
-                        let date = dateFormatterGet.string(from: Date(timeIntervalSince1970: (obj["first_release_date"] as! TimeInterval)))
-                        game.releaseDate = self.dateFormatter.date(from: date)
+                        let dateUNIX = self.dateFormatter.string(from: Date(timeIntervalSince1970: obj["first_release_date"] as! TimeInterval))
+                        game.releaseDate = self.dateFormatter.date(from: dateUNIX)
                     }
                     if(obj.keys.contains("summary")) {
                         game.description = (obj["summary"] as! String)
@@ -111,21 +114,46 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
                     if(obj.keys.contains("platforms")) {
                         game.platformIDs = (obj["platforms"] as! [Int])
                     }
-                    defaultGames.append(game)
+                    games.append(game)
                 }
             }
             semaphore.signal()
         }
         task.resume()
         semaphore.wait()
-        return defaultGames
+        return games
+    }
+    
+    func fillInDetailsFor(game: SearchGame) -> Game{
+        let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
+        var newGame = Game(title: game.title, releaseDate: game.releaseDate, description: game.description)
+        DispatchQueue.global().async {
+            if(game.involvedCompanyIDs != nil) {
+                let developerIDs = self.getDeveloperIdsFrom(involvedCompaniesIds: game.involvedCompanyIDs!)
+                if(developerIDs.isEmpty == false){
+                    newGame.developer = self.getDeveloperNameFrom(developerIDs: developerIDs)
+                }
+            }
+            if(game.coverID != nil) {
+                newGame.coverURL = self.getCoverURLFrom(coverID: game.coverID!)
+            }
+            if(game.genreIDs?.isEmpty == false) {
+                newGame.genre = self.getGenreFrom(genreIDs: game.genreIDs!)
+            }
+            if(game.platformIDs?.isEmpty == false) {
+                newGame.platform = self.getPlatformFrom(platformIDs: game.platformIDs!)
+            }
+            semaphore.signal()
+        }
+        semaphore.wait()
+        return newGame
     }
     
     func getDeveloperIdsFrom(involvedCompaniesIds: [Int]) -> [Int] {
         var developerIds = [Int]()
-        let companyIds = involvedCompaniesIds.map(String.init).joined(separator: ",")
+        let companyIDs = involvedCompaniesIds.map(String.init).joined(separator: ",")
         var requestHeader = URLRequest.init(url: URL(string: "https://api-v3.igdb.com/involved_companies")!)
-        requestHeader.httpBody = "fields company,developer; where id = (\(companyIds));".data(using: .utf8, allowLossyConversion: false)
+        requestHeader.httpBody = "fields company,developer; where id = (\(companyIDs));".data(using: .utf8, allowLossyConversion: false)
         requestHeader.httpMethod = "POST"
         requestHeader.setValue(apikey, forHTTPHeaderField: "user-key")
         requestHeader.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -145,12 +173,126 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
         return developerIds
     }
     
+    func getDeveloperNameFrom(developerIDs: [Int]) -> String {
+        var developerName = String()
+        let companyIDs = developerIDs.map(String.init).joined(separator: ",")
+        var requestHeader = URLRequest.init(url: URL(string: "https://api-v3.igdb.com/companies")!)
+        requestHeader.httpBody = "fields name; where id = (\(companyIDs));".data(using: .utf8, allowLossyConversion: false)
+        requestHeader.httpMethod = "POST"
+        requestHeader.setValue(apikey, forHTTPHeaderField: "user-key")
+        requestHeader.setValue("application/json", forHTTPHeaderField: "Accept")
+        let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: requestHeader) { (data, response, error) in
+            if let jsonObj = try? JSONSerialization.jsonObject(with: data!) as? [[ String : Any]]{
+                for obj in jsonObj {
+                    if(obj.keys.contains("name")) {
+                        if(developerName.isEmpty) {
+                            developerName = obj["name"] as! String
+                        } else {
+                            developerName.append(", \(obj["name"] as! String)")
+                        }
+                        
+                    }
+                }
+                semaphore.signal()
+            }
+        }
+        task.resume()
+        semaphore.wait()
+        return developerName
+    }
+    
+    func getCoverURLFrom(coverID: Int) -> String {
+        var coverURL = String("https:")
+        var requestHeader = URLRequest.init(url: URL(string: "https://api-v3.igdb.com/covers")!)
+        requestHeader.httpBody = "fields url; where id = (\(coverID));".data(using: .utf8, allowLossyConversion: false)
+        requestHeader.httpMethod = "POST"
+        requestHeader.setValue(apikey, forHTTPHeaderField: "user-key")
+        requestHeader.setValue("application/json", forHTTPHeaderField: "Accept")
+        let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: requestHeader) { (data, response, error) in
+            if let jsonObj = try? JSONSerialization.jsonObject(with: data!) as? [[ String : Any]]{
+                if(jsonObj[0].keys.contains("url")) {
+                    coverURL.append(jsonObj[0]["url"] as! String)
+                    coverURL = coverURL.replacingOccurrences(of: #"t_thumb"#, with: "t_cover_big", options: .regularExpression)
+                }
+                
+                semaphore.signal()
+            }
+        }
+        task.resume()
+        semaphore.wait()
+        return coverURL
+    }
+    
+    func getGenreFrom(genreIDs: [Int]) -> String {
+        var genre = String()
+        let genres = genreIDs.map(String.init).joined(separator: ",")
+        var requestHeader = URLRequest.init(url: URL(string: "https://api-v3.igdb.com/genres")!)
+        requestHeader.httpBody = "fields name; where id = (\(genres));".data(using: .utf8, allowLossyConversion: false)
+        requestHeader.httpMethod = "POST"
+        requestHeader.setValue(apikey, forHTTPHeaderField: "user-key")
+        requestHeader.setValue("application/json", forHTTPHeaderField: "Accept")
+        let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: requestHeader) { (data, response, error) in
+            if let jsonObj = try? JSONSerialization.jsonObject(with: data!) as? [[ String : Any]]{
+                for obj in jsonObj {
+                    if(obj.keys.contains("name")) {
+                        if(genre.isEmpty) {
+                            genre = obj["name"] as! String
+                        } else {
+                            genre.append(", \(obj["name"] as! String)")
+                        }
+                        
+                    }
+                }
+                semaphore.signal()
+            }
+        }
+        task.resume()
+        semaphore.wait()
+        return genre
+    }
+    
+    func getPlatformFrom(platformIDs: [Int]) -> String {
+        var platform = String()
+        let platforms = platformIDs.map(String.init).joined(separator: ",")
+        var requestHeader = URLRequest.init(url: URL(string: "https://api-v3.igdb.com/platforms")!)
+        requestHeader.httpBody = "fields name; where id = (\(platforms));".data(using: .utf8, allowLossyConversion: false)
+        requestHeader.httpMethod = "POST"
+        requestHeader.setValue(apikey, forHTTPHeaderField: "user-key")
+        requestHeader.setValue("application/json", forHTTPHeaderField: "Accept")
+        let semaphore: DispatchSemaphore = DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: requestHeader) { (data, response, error) in
+            if let jsonObj = try? JSONSerialization.jsonObject(with: data!) as? [[ String : Any]]{
+                for obj in jsonObj {
+                    if(obj.keys.contains("name")) {
+                        if(platform.isEmpty) {
+                            platform = obj["name"] as! String
+                        } else {
+                            platform.append(", \(obj["name"] as! String)")
+                        }
+                        
+                    }
+                }
+                semaphore.signal()
+            }
+        }
+        task.resume()
+        semaphore.wait()
+        return platform
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        loadDefaultGames()
-        self.hideKeyboardWhenTappedAround() 
+        dateFormatter.dateFormat = "yyyy"
+        
+        self.hideKeyboardWhenTappedAround()
+        tableView.keyboardDismissMode = .onDrag
+        games.append(contentsOf: self.getGamesWith(query: "fields *; limit 25; sort popularity desc;"))
+        tableView.reloadData()
     }
 
 }

@@ -22,6 +22,7 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
     @IBOutlet weak var editGenre: UITextView!
     @IBOutlet weak var editPlatform: UITextView!
     @IBOutlet weak var editCategory: UIPickerView!
+    @IBOutlet var keyboardHeightLayoutConstraint: NSLayoutConstraint?
     var game:Game = Game()
     var delegate:EditGameProtocol?
     let dateFormatter = DateFormatter()
@@ -125,6 +126,31 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         }
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    //push content up when keyboard is on screen
+    @objc func keyboardNotification(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            let endFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+            let endFrameY = endFrame?.origin.y ?? 0
+            let duration:TimeInterval = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+            let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
+            let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
+            let animationCurve:UIView.AnimationOptions = UIView.AnimationOptions(rawValue: animationCurveRaw)
+            if endFrameY >= UIScreen.main.bounds.size.height {
+                self.keyboardHeightLayoutConstraint?.constant = 0.0
+            } else {
+                self.keyboardHeightLayoutConstraint?.constant = endFrame?.size.height ?? 0.0
+            }
+            UIView.animate(withDuration: duration,
+                                       delay: TimeInterval(0),
+                                       options: animationCurve,
+                                       animations: { self.view.layoutIfNeeded() },
+                                       completion: nil)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,6 +186,7 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
             editCover.image = cover
         }
         
+        // set info boxes to game being edited
         editTitle.text! = game.title
         editDeveloper.text! = game.developer
         editReleaseDate.text! = dateFormatter.string(from: game.releaseDate)
@@ -171,6 +198,14 @@ class EditViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
         let save = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveGame))
         
         self.navigationItem.rightBarButtonItem = save
+        
+        // Notification to avoid keyboard overlapping elements
+        NotificationCenter.default.addObserver(self,
+        selector: #selector(self.keyboardNotification(notification:)),
+        name: UIResponder.keyboardWillChangeFrameNotification,
+        object: nil)
+        
+        self.hideKeyboardWhenTappedAround()
     }
 
 }

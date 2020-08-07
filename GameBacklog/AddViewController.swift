@@ -22,6 +22,8 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
     @IBOutlet weak var addGenre: UITextView!
     @IBOutlet weak var addPlatform: UITextView!
     @IBOutlet weak var addCategory: UIPickerView!
+    @IBOutlet var keyboardHeightLayoutConstraint: NSLayoutConstraint?
+    var game:Game = Game()
     var delegate:AddGameProtocol?
     let dateFormatter = DateFormatter()
     var pickerData:[Category] = [Category]()
@@ -47,13 +49,18 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
         alert.addAction(UIAlertAction(title: "Submit", style: .default, handler: { [weak alert] (_) in
             if let imageURL = alert?.textFields![0].text, !imageURL.isEmpty {
                 let url = URL(string: imageURL)!
-                if let data = try? Data(contentsOf: url) {
-                    self.addCover.image = UIImage(data: data)
-                }
+                self.addCover.image = self.loadImageFrom(url: url)
             }
         }))
 
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func loadImageFrom(url: URL) -> UIImage {
+        if let data = try? Data(contentsOf: url) {
+            return UIImage(data: data)!
+        }
+        return UIImage(named: "noImage")!
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -91,6 +98,32 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
         }
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    //push content up when keyboard is on screen
+    @objc func keyboardNotification(notification: NSNotification) {
+        if let userInfo = notification.userInfo {
+            let endFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+            let endFrameY = endFrame?.origin.y ?? 0
+            let duration:TimeInterval = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+            let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
+            let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
+            let animationCurve:UIView.AnimationOptions = UIView.AnimationOptions(rawValue: animationCurveRaw)
+            if endFrameY >= UIScreen.main.bounds.size.height {
+                self.keyboardHeightLayoutConstraint?.constant = 0.0
+            } else {
+                self.keyboardHeightLayoutConstraint?.constant = endFrame?.size.height ?? 0.0
+            }
+            UIView.animate(withDuration: duration,
+                                       delay: TimeInterval(0),
+                                       options: animationCurve,
+                                       animations: { self.view.layoutIfNeeded() },
+                                       completion: nil)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -122,7 +155,23 @@ class AddViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDat
             pickerData.append(category)
         }
         
+        // fill input boxes when navigating from search
+        addTitle.text = game.title
+        addDeveloper.text = game.developer
+        addReleaseDate.text = dateFormatter.string(from: game.releaseDate)
+        addDescription.text = game.description
+        addGenre.text = game.genre
+        addPlatform.text = game.platform
+        addCategory.selectRow(pickerData.firstIndex(of: game.category)!, inComponent: 0, animated: false)
+        
         self.navigationItem.rightBarButtonItem = save
 
+        // Notification to avoid keyboard overlapping elements
+        NotificationCenter.default.addObserver(self,
+        selector: #selector(self.keyboardNotification(notification:)),
+        name: UIResponder.keyboardWillChangeFrameNotification,
+        object: nil)
+        
+        self.hideKeyboardWhenTappedAround() 
     }
 }

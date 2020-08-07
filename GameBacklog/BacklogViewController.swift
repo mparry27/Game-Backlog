@@ -26,8 +26,20 @@ enum Category : String {
     static let allValues = [planned, playing, finished, completed]
 }
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddGameProtocol, EditGameProtocol {
+class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddGameProtocol, EditGameProtocol {
     
+    @IBOutlet weak var tableView: UITableView!
+    
+    var valueSentFromAddViewController:Game?
+    var valueSentFromEditViewController:Game?
+    var gamesPlaying: [Game]! = []
+    var gamesPlanned: [Game]! = []
+    var gamesFinished: [Game]! = []
+    var gamesCompleted: [Game]! = []
+    var gameIndex: Int!
+    var gameBeingEdited: Int!
+    var gameData: Game!
+    let dateFormatter = DateFormatter()
     var db: OpaquePointer?
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -133,19 +145,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
     
-    @IBOutlet weak var tableView: UITableView!
-    
-    var valueSentFromAddViewController:Game?
-    var valueSentFromEditViewController:Game?
-    var gamesPlaying: [Game]! = []
-    var gamesPlanned: [Game]! = []
-    var gamesFinished: [Game]! = []
-    var gamesCompleted: [Game]! = []
-    var gameIndex: Int!
-    var gameBeingEdited: Int!
-    var gamePreviousCategory: Category!
-    var gameData: Game!
-    let dateFormatter = DateFormatter()
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "addSegue" {
@@ -180,6 +179,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             view.game.category = currentGame.category
         }
     }
+    
+    // used from the search view to add game using addGame in this view
+    @objc func addGameFromSearch(_ notification: NSNotification) {
+         if let game = notification.userInfo?["game"] as? Game {
+            if let cover = notification.userInfo?["cover"] as? UIImage? {
+                addGame(game, cover)
+            }
+         }
+    }
+    
     func addGame(_ game: Game, _ cover: UIImage?) {
         switch game.category {
             case Category.playing:
@@ -193,6 +202,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         saveImage(coverURL: game.coverURL, image: cover!)
         tableView.reloadData()
+        
     }
     
     func editGame(_ game: Game, _ cover: UIImage?) {
@@ -412,12 +422,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
         }
         tableView.reloadData()
+        self.hideKeyboardWhenTappedAround() 
    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
         dateFormatter.dateFormat = "yyyy"
+        
+        //Set up SQL Database
+        
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self,selector: #selector(saveToDatabase(_:)),name: UIApplication.willResignActiveNotification, object: nil)
 
@@ -431,8 +446,24 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let errmsg = String(cString: sqlite3_errmsg(db)!)
             print("error creating table: \(errmsg)")
         }
+        
+        readValues()
+        
+        //add observer for adding games from search view
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addGameFromSearch(_:)), name: NSNotification.Name(rawValue: "notificationName"), object: nil)
+        
     }
-
-
 }
 
+//hide keyboard when touch outside it
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}

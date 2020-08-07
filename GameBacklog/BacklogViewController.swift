@@ -338,11 +338,21 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
            return
         }
         
-        if sqlite3_bind_text(stmt, 3, (dateFormatter.string(from: game.releaseDate!) as NSString).utf8String, -1, nil) != SQLITE_OK{
-           let errmsg = String(cString: sqlite3_errmsg(db)!)
-           print("failure binding releaseDate: \(errmsg)")
-           return
+        
+        if(game.releaseDate != nil) {
+            if sqlite3_bind_text(stmt, 3, (dateFormatter.string(from: game.releaseDate!) as NSString).utf8String, -1, nil) != SQLITE_OK{
+               let errmsg = String(cString: sqlite3_errmsg(db)!)
+               print("failure binding releaseDate: \(errmsg)")
+               return
+            }
+        } else {
+            if sqlite3_bind_text(stmt, 3, ("" as NSString).utf8String, -1, nil) != SQLITE_OK{
+               let errmsg = String(cString: sqlite3_errmsg(db)!)
+               print("failure binding releaseDate: \(errmsg)")
+               return
+            }
         }
+
         
         if sqlite3_bind_text(stmt, 4, (game.coverURL! as NSString).utf8String, -1, nil) != SQLITE_OK{
            let errmsg = String(cString: sqlite3_errmsg(db)!)
@@ -406,7 +416,7 @@ class BacklogViewController: UIViewController, UITableViewDelegate, UITableViewD
         while(sqlite3_step(stmt) == SQLITE_ROW){
             let title = String(cString: sqlite3_column_text(stmt, 1))
             let developer = String(cString: sqlite3_column_text(stmt, 2))
-            let releaseDate = dateFormatter.date(from: String(cString: sqlite3_column_text(stmt, 3)))!
+            let releaseDate = dateFormatter.date(from: String(cString: sqlite3_column_text(stmt, 3)))
             let coverURL = String(cString: sqlite3_column_text(stmt, 4))
             let description = String(cString: sqlite3_column_text(stmt, 5))
             let genre = String(cString: sqlite3_column_text(stmt, 6))

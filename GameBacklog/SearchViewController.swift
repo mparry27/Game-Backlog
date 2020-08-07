@@ -32,7 +32,7 @@ class SearchViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var gameData: SearchGame!
     let dateFormatter = DateFormatter()
     let myGroup = DispatchGroup()
-    let apikey = "45725bddf722eccd54489c37c83a8471"
+    let apikey = IGDBAPIKEY
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return games.count

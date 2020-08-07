@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		172BCD0B24DD817800A81F01 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172BCD0A24DD817800A81F01 /* Constants.swift */; };
 		172EB66724DAAAC00053D93D /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		173AC13B24DA8E700099D9F0 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 173AC13A24DA8E700099D9F0 /* SearchViewController.swift */; };
 		179F928A24A55E8C006FCF14 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179F928924A55E8C006FCF14 /* AppDelegate.swift */; };
@@ -34,6 +35,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		172BCD0A24DD817800A81F01 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		173AC13A24DA8E700099D9F0 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		179F928624A55E8C006FCF14 /* Game Backlog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Game Backlog.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		179F928924A55E8C006FCF14 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				179F929424A55E93006FCF14 /* LaunchScreen.storyboard */,
 				179F929724A55E93006FCF14 /* Info.plist */,
 				173AC13A24DA8E700099D9F0 /* SearchViewController.swift */,
+				172BCD0A24DD817800A81F01 /* Constants.swift */,
 			);
 			name = "Game Backlog";
 			path = GameBacklog;
@@ -168,6 +171,7 @@
 				179F92C024A56089006FCF14 /* AddViewController.swift in Sources */,
 				179F92BE24A56070006FCF14 /* EditViewController.swift in Sources */,
 				179F928E24A55E8C006FCF14 /* BacklogViewController.swift in Sources */,
+				172BCD0B24DD817800A81F01 /* Constants.swift in Sources */,
 				179F928A24A55E8C006FCF14 /* AppDelegate.swift in Sources */,
 				179F928C24A55E8C006FCF14 /* SceneDelegate.swift in Sources */,
 			);
